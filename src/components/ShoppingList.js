@@ -1,12 +1,29 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ItemForm from "./ItemForm";
 import Filter from "./Filter";
 import Item from "./Item";
 
+
 function ShoppingList() {
+
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [items, setItems] = useState([]);
 
+  useEffect(() => {
+    fetch("http://localhost:4000/items")
+      .then((r) => {
+        if (r.ok) {
+          return r.json();
+        }
+        throw new Error("Failed to fetch items.");
+      })
+      .then((data) => setItems(data))
+      .catch((error) => console.error("Error fetching items:", error));
+  }, []);
+  function handleUpdateItem(updatedItem) {
+    console.log("In ShoppingCart:", updatedItem);
+  }
+  }
   function handleCategoryChange(category) {
     setSelectedCategory(category);
   }
@@ -17,10 +34,10 @@ function ShoppingList() {
     return item.category === selectedCategory;
   });
 
-  return (
-    <div className="ShoppingList">
-      <ItemForm />
-      <Filter
+      return (
+         <div className="ShoppingList">
+           <ItemForm />
+             <Filter
         category={selectedCategory}
         onCategoryChange={handleCategoryChange}
       />
@@ -31,6 +48,6 @@ function ShoppingList() {
       </ul>
     </div>
   );
-}
+        
 
 export default ShoppingList;
